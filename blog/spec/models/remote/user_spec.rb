@@ -1,8 +1,9 @@
 require 'rails_helper'
+require 'support/service_providers/user_profile_provider_helper'
 
-RSpec.describe Remote::User, type: :model do
+RSpec.describe Remote::User, pact: true do
   describe 'find' do
-    subject { Remote::User.find(1) }
+    subject { Remote::User.find(100) }
 
     let(:response_body) do
       {
@@ -12,8 +13,14 @@ RSpec.describe Remote::User, type: :model do
     end
 
     before do
-      stub_request(:get, "#{Remote::User::BASE_URL}/users/1")
-        .to_return(body: response_body.to_json)
+      user_profile.given('a user with id 100 exists')
+                  .upon_receiving('a request for user 100')
+                  .with(method: :get, path: '/users/100', query: '')
+                  .will_respond_with(
+                    status: 200,
+                    headers: { 'Content-Type' => 'application/json; charset=utf-8' },
+                    body: response_body
+                  )
     end
 
     it { is_expected.to be_kind_of Remote::User }

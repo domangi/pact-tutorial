@@ -17,7 +17,6 @@ RSpec.describe 'Users', type: :request do
 
       parsed_response = JSON.parse response.body
       expect(parsed_response['name']).to eq 'Bruce Lee'
-      expect(parsed_response['email']).to eq 'bruce.lee@example.com'
     end
   end
 end
